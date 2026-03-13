@@ -252,6 +252,150 @@ color:#333;
 text-decoration:underline;
 }
 
+/* BLOG PAGE */
+
+.blog{
+padding:160px 120px;
+max-width:1100px;
+margin:auto;
+}
+
+.blog-title{
+font-size:60px;
+margin-bottom:60px;
+}
+
+.blog-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:40px;
+}
+
+.blog-card{
+background:white;
+padding:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.blog-card img{
+width:100%;
+padding:0px;
+margin-bottom:20px;
+}
+
+.blog-card h3{
+margin-top:0;
+margin-bottom: 5px;
+}
+
+.blog-card p{
+color:#555;
+line-height:1.6;
+margin-top:0; 
+}
+
+.blog-card a{
+text-decoration:none;
+color:#2f3f2f;
+font-weight:600;
+}
+
+/* POST PAGE */
+
+.post{
+max-width:750px;
+margin:140px auto;
+padding:60px;
+padding-left: 100px;
+padding-right: 100px;
+background:white;
+box-shadow:0 20px 40px rgba(0,0,0,0.08);
+}
+
+
+/* 文章標題 */
+
+.post h1{
+font-size:42px;
+font-weight: 500;
+margin-top:0;
+margin-bottom:0px;
+}
+
+
+/* 日期或副標題 */
+
+.post .post-meta{
+color:#888;
+font-size:14px;
+margin-top:5px;
+margin-bottom:20px;
+text-indent: 0;
+}
+
+
+/* 文章圖片 */
+
+.post img{
+width:100%;
+margin:20px 0 0 0;
+}
+
+
+/* 段落 */
+
+.post p{
+line-height:1.6;
+color:#444;
+margin:0;
+font-size: 18px;
+font-weight: 300;
+text-indent: 2em;
+text-align: justify;
+}
+
+.post p.info{
+line-height:1.6;
+color:#444;
+margin:0;
+font-size: 18px;
+font-weight: 300;
+text-indent: 0;
+}
+
+
+/* 小標題 */
+
+.post h2{
+font-size: 20px;
+font-weight: 600;
+margin:0 0 1px 0;
+text-indent: 0;
+}
+
+
+/* 引用 */
+
+.post blockquote{
+border-left:4px solid #2f3f2f;
+padding-left:15px;
+color:#555;
+margin:20px 0;
+}
+
+
+/* 返回按鈕 */
+
+.post-back{
+display:inline-block;
+margin-top:40px;
+padding:10px 22px;
+background:#2f3f2f;
+color:white;
+border-radius:25px;
+text-decoration:none;
+font-weight:600;
+}
 
 /* MOBILE */
 
