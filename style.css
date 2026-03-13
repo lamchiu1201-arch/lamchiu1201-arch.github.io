@@ -338,7 +338,7 @@ text-indent: 0;
 
 .post img{
 width:100%;
-margin:20px 0 0 0;
+margin:5px 0 0 0;
 }
 
 
@@ -395,6 +395,158 @@ color:white;
 border-radius:25px;
 text-decoration:none;
 font-weight:600;
+}
+
+/* 目錄 */
+
+.layout{
+  display:flex;
+  max-width:1100px;
+  margin:auto;
+}
+
+/* 桌機版側邊目錄 */
+
+.toc{
+  position:fixed;
+  left:0;
+  top:120px;
+  width:100px;
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(8px);  padding:15px;
+  transform:translateX(-100%);
+  transition:0.3s;
+}
+
+.toc.open{
+  transform:translateX(0);
+}
+
+.toc-toggle{
+  position:fixed;
+  left:16px;
+  top:120px;
+  z-index:1000;
+  padding:8px 14px;
+  font-size:16px;
+  color:#333;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .2s;
+}
+
+
+.toc ul{
+  list-style:none;
+  padding-left:0;
+}
+
+.toc li{
+  margin-bottom:5px;
+}
+
+.toc a{
+  text-decoration:none;
+  color:#444;
+}
+
+.post{
+  flex:1;
+}
+
+/* 表格基本樣式 */
+.gear-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* 表格格線 */
+.gear-table th,
+.gear-table td{
+  border:1px solid #ddd;
+  padding:12px;
+  vertical-align:top;
+}
+
+/* 表頭 */
+.gear-table th{
+  background:#f5f5f5;
+  text-align:center;
+  font-weight: bold;
+}
+
+/* 文字欄位 */
+.gear-table td{
+  text-align:left;
+  font-weight: 300;
+}
+
+/* 手機可滑動 */
+.table-wrapper{
+  overflow-x:auto;
+}
+
+/* 手機版 */
+
+@media (max-width:768px){
+
+  .layout{
+    display:block;
+  }
+
+  .toc{
+    width:100%;
+    position:relative;
+    margin-bottom:20px;
+  }
+
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+h2{
+  scroll-margin-top:80px;
+}
+
+/* 行程比對 */
+
+.route-table td{
+vertical-align: top;
+line-height: 1.6;
+}
+
+.time{
+font-weight:700;
+}
+
+.camp{
+background:#e8f5e9;
+color:#2e7d32;
+padding:2px 6px;
+border-radius:4px;
+font-weight:600;
+}
+
+.water{
+background:#e3f2fd;
+color:#1976d2;
+padding:2px 6px;
+border-radius:4px;
+font-weight:600;
+}
+
+.break{
+background:#fff3e0;
+color:#e65100;
+padding:2px 6px;
+border-radius:4px;
+font-size:0.9em;
 }
 
 /* MOBILE */
