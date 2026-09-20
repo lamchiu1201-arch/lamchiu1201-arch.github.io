@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DumbyMap – Markers with Photos & OSM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- 載入地圖套件 MapLibre GL CSS & JS -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  
+  <!-- 載入 Markdown 解析器與樣式 -->
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f6f8fa;
+      color: #24292f;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 32px;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+    }
+    #map {
+      width: 100%;
+      height: 400px;
+      margin-top: 20px;
+      border-radius: 8px;
+      border: 1px solid #d0d7de;
+    }
+    /* 表格樣式優化 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f6f8fa;
+    }
+
+    /* 加入：彈出視窗 (Popup) 內容樣式設定 */
+    .popup-card {
+      text-align: center;
+      padding: 4px;
+      max-width: 200px;
+    }
+    .popup-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      color: #333;
+    }
+    .popup-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Markdown 內容渲染目標 -->
+    <div id="content" class="markdown-body"></div>
+    
+    <!-- 地圖容器 -->
+    <div id="map"></div>
+  </div>
+
+  <!-- 原始 Markdown 資料 -->
+  <script type="text/markdown" id="md-content">
+
+- <a href="geo:24.545228,121.028749?type=pin" class="geolink" data-lat="24.545228" data-lng="121.028749" data-title="8米潭瀑">8米潭瀑</a>
+- <a href="geo:24.544281,121.025682?type=star" class="geolink" data-lat="24.544281" data-lng="121.025682" data-title="Taipei 101">左岸高繞</a>
+- <a href="geo:25.0797,121.5767?type=campsite" class="geolink" data-lat="25.0797" data-lng="121.5767" data-title="Songshan Airport area">campsite – Songshan Airport area</a>
+- <a href="geo:25.0523,121.5436?type=mountain" class="geolink" data-lat="25.0523" data-lng="121.5436" data-title="Zhongzheng District">mountain – Zhongzheng District</a>
+- <a href="geo:25.0408,121.5700?type=caution" class="geolink" data-lat="25.0408" data-lng="121.5700" data-title="Da'an District">caution – Da'an District</a>
+
+## Map
+  </script>
+
+  <script>
+    // 1. 解析並渲染 Markdown 內容
+    const md = window.markdownit({ html: true });
+    const rawMd = document.getElementById('md-content').textContent;
+    document.getElementById('content').innerHTML = md.render(rawMd);
+
+    // 2. 初始化 MapLibre GL 互動式地圖 (使用 OpenStreetMap 圖層)
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          'osm-tiles': {
+            type: 'raster',
+            tiles: [
+              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            ],
+            tileSize: 256,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+        },
+        layers: [
+          {
+            id: 'osm-tiles-layer',
+            type: 'raster',
+            source: 'osm-tiles',
+            minzoom: 0,
+            maxzoom: 19
+          }
+        ]
+      },
+      center: [121.5500, 25.0500],
+      zoom: 12
+    });
+
+    map.addControl(new maplibregl.NavigationControl());
+
+    // 3. 加入每個地標的圖片資料 (image)
+    const locations = [
+      { lng: 121.028749, lat: 24.545228, title: "8米潭瀑", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260725/IMG_0698.JPG" },
+      { lng: 121.025682, lat: 24.544281, title: "左岸高繞", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260725/IMG_0729.JPG" },
+      { lng: 121.5767, lat: 25.0797, title: "campsite – Songshan Airport area", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=80" },
+      { lng: 121.5436, lat: 25.0523, title: "mountain – Zhongzheng District", image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&q=80" },
+      { lng: 121.5700, lat: 25.0408, title: "caution – Da'an District", image: "https://images.unsplash.com/photo-1470071131384-001b85755b36?w=400&q=80" }
+    ];
+
+    // 4. 在地圖上加上 Marker 與包含圖片的 Popup
+    locations.forEach(loc => {
+      // 組合包含圖片與標題的 HTML 卡片
+      const popupHtml = `
+        <div class="popup-card">
+          <h3>${loc.title}</h3>
+          <img src="${loc.image}" alt="${loc.title}">
+        </div>
+      `;
+
+      // 繫結至地圖，原有的 setText 改為 setHTML
+      new maplibregl.Marker({ color: '#e63946' })
+        .setLngLat([loc.lng, loc.lat])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(popupHtml))
+        .addTo(map);
+    });
+
+    // 5. 點擊文字連結時平滑移動地圖至該點 (保留原功能)
+    document.querySelectorAll('.geolink').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const lat = parseFloat(link.getAttribute('data-lat'));
+        const lng = parseFloat(link.getAttribute('data-lng'));
+        map.flyTo({ center: [lng, lat], zoom: 14 });
+      });
+    });
+  </script>
+</body>
+</html>
