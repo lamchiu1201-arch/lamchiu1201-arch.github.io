@@ -87,13 +87,6 @@
   <!-- 原始 Markdown 資料 -->
   <script type="text/markdown" id="md-content">
 
-- <a href="geo:24.545228,121.028749?type=pin" class="geolink" data-lat="24.545228" data-lng="121.028749" data-title="8米潭瀑">8米潭瀑</a>
-- <a href="geo:24.544281,121.025682?type=star" class="geolink" data-lat="24.544281" data-lng="121.025682" data-title="Taipei 101">左岸高繞</a>
-- <a href="geo:25.0797,121.5767?type=campsite" class="geolink" data-lat="25.0797" data-lng="121.5767" data-title="Songshan Airport area">campsite – Songshan Airport area</a>
-- <a href="geo:25.0523,121.5436?type=mountain" class="geolink" data-lat="25.0523" data-lng="121.5436" data-title="Zhongzheng District">mountain – Zhongzheng District</a>
-- <a href="geo:25.0408,121.5700?type=caution" class="geolink" data-lat="25.0408" data-lng="121.5700" data-title="Da'an District">caution – Da'an District</a>
-
-## Map
   </script>
 
   <script>
@@ -129,32 +122,40 @@
           }
         ]
       },
-      center: [121.5500, 25.0500],
-      zoom: 12
+      center: [121.60550, 25.15004],
+      zoom: 15.5
     });
 
     map.addControl(new maplibregl.NavigationControl());
 
     // 3. 加入每個地標的圖片資料 (image)
     const locations = [
-      { lng: 121.028749, lat: 24.545228, title: "8米潭瀑", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260725/IMG_0698.JPG" },
-      { lng: 121.025682, lat: 24.544281, title: "左岸高繞", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260725/IMG_0729.JPG" },
-      { lng: 121.5767, lat: 25.0797, title: "campsite – Songshan Airport area", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=80" },
-      { lng: 121.5436, lat: 25.0523, title: "mountain – Zhongzheng District", image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&q=80" },
-      { lng: 121.5700, lat: 25.0408, title: "caution – Da'an District", image: "https://images.unsplash.com/photo-1470071131384-001b85755b36?w=400&q=80" }
+      { lng: 121.60305, lat: 25.15156, title: "10米支流瀑", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260920/N25.15156° E121.60305°.JPG" },
+      { lng: 121.60295, lat: 25.15174, title: "10米支流瀑", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260920/N25.15174° E121.60295°.JPG" },
+      { lng: 121.60309, lat: 25.15110, title: "支流瀑", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260920/N25.15110° E121.60309°.JPG" },
+      { lng: 121.60332, lat: 25.15024, title: "支流", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260920/N25.15024° E121.60332°.jpg" },
+      { lng: 121.60725, lat: 25.14903, title: "2M潭瀑", image: "/Users/lamchiu/Documents/GitHub/lamchiu1201-arch.github.io/images/20260920/N25.14903° E121.60725°.jpg" },    
+      { lng: 121.60215, lat: 25.15114, title: "停車點", description:"可停兩台汽車"},    
+      { lng: 121.60274, lat: 25.15171, title: "養鱒場"},    
+      { lng: 121.60894, lat: 25.14784, title: "溪底二號橋"},    
     ];
 
-    // 4. 在地圖上加上 Marker 與包含圖片的 Popup
+    // 4. 在地圖上加上 Marker 與 Popup（自動判斷文字敘述與圖片）
     locations.forEach(loc => {
-      // 組合包含圖片與標題的 HTML 卡片
+      // 判斷是否具備文字敘述
+      const descTag = loc.description ? `<p class="popup-desc">${loc.description}</p>` : '';
+      
+      // 判斷是否具備圖片
+      const imgTag = loc.image ? `<img src="${loc.image}" alt="${loc.title}">` : '';
+
       const popupHtml = `
         <div class="popup-card">
           <h3>${loc.title}</h3>
-          <img src="${loc.image}" alt="${loc.title}">
+          ${descTag}
+          ${imgTag}
         </div>
       `;
 
-      // 繫結至地圖，原有的 setText 改為 setHTML
       new maplibregl.Marker({ color: '#e63946' })
         .setLngLat([loc.lng, loc.lat])
         .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(popupHtml))
