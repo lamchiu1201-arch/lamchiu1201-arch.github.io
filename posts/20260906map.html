@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+ <html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DumbyMap – Markers with Photos & OSM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- 載入地圖套件 MapLibre GL CSS & JS -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  
+  <!-- 載入 GPX 轉 GeoJSON 套件 toGeoJSON -->
+  <script src="https://cdn.jsdelivr.net/npm/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
+
+  <!-- 載入 Markdown 解析器與樣式 -->
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: transparent;
+      color: #24292f;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0;
+      background: transparent;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+    }
+
+    #map {
+      width: 100%;
+      height: 525px;
+      margin-top: 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    /* 彈出視窗外框容器陰影美化 */
+    .maplibregl-popup-content {
+      padding: 0;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border: none;
+      overflow: hidden;
+    }
+    .maplibregl-popup-close-button {
+      padding: 4px 8px;
+      color: #666;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .popup-card {
+      text-align: left;
+      min-width: 150px;
+      max-width: 220px;
+    }
+
+    /* 帶有圖片的卡片樣式 */
+    .popup-card.has-image {
+      padding: 10px;
+    }
+    .popup-card.has-image h3 {
+      margin: 2px 0 6px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f2328;
+      text-align: center;
+    }
+    .popup-card.has-image .popup-desc {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #59636e;
+      white-space: pre-wrap;
+    }
+    .popup-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+      margin-top: 4px;
+      cursor: zoom-in;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .popup-card img:hover {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+
+    /* 純文字卡片樣式 */
+    .popup-card.no-image {
+      padding: 12px 16px 14px 16px;
+      background: #ffffff;
+      min-width: 160px;
+    }
+    .popup-card.no-image h3 {
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1f2328;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .popup-card.no-image .popup-desc {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #59636e;
+      background-color: transparent;
+      padding: 0;
+      border-left: none;
+      white-space: pre-wrap;
+    }
+
+    /* 圖片放大燈箱 (Modal) 樣式 */
+    .image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+    }
+    .image-modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      object-fit: contain;
+      cursor: default;
+    }
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      color: #fff;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div id="content" class="markdown-body"></div>
+    <div id="map"></div>
+  </div>
+
+  <!-- 點擊圖片後彈出的放大燈箱 -->
+  <div id="image-modal" class="image-modal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img id="modal-img" src="" alt="放大照片" onclick="event.stopPropagation()">
+  </div>
+
+  <script type="text/markdown" id="md-content">
+  </script>
+
+  <script>
+    // 1. 解析並渲染 Markdown 內容
+    const md = window.markdownit({ html: true });
+    const rawMd = document.getElementById('md-content').textContent;
+    document.getElementById('content').innerHTML = md.render(rawMd);
+
+    // 2. 初始化 MapLibre GL 互動式地圖
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          'osm-tiles': {
+            type: 'raster',
+            tiles: [
+              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            ],
+            tileSize: 256,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+        },
+        layers: [
+          {
+            id: 'osm-tiles-layer',
+            type: 'raster',
+            source: 'osm-tiles',
+            minzoom: 0,
+            maxzoom: 19
+          }
+        ]
+      },
+      center: [121.60550, 25.15004],
+      zoom: 16
+    });
+
+    map.addControl(new maplibregl.NavigationControl());
+
+    // 3. 地圖載入完成後：透過 fetch 讀取 GPX 檔並繪製航跡
+    map.on('load', () => {
+      // 請將此處路徑替換為您的 GPX 檔案相對路徑
+      const gpxFilePath = '../gpx/20260920.GPX';
+
+      fetch(gpxFilePath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`無法載入 GPX 檔案：狀態碼 ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(gpxText => {
+          // 將 GPX XML 文字解析為 DOM
+          const parser = new DOMParser();
+          const gpxDom = parser.parseFromString(gpxText, 'text/xml');
+
+          // 使用 toGeoJSON 轉換為 GeoJSON 格式
+          const geojsonData = toGeoJSON.gpx(gpxDom);
+
+          // 加入 GeoJSON 資料來源
+          map.addSource('gpx-track', {
+            type: 'geojson',
+            data: geojsonData
+          });
+
+          // 繪製航跡白色外邊線（增加對比度）
+          map.addLayer({
+            id: 'gpx-track-casing',
+            type: 'line',
+            source: 'gpx-track',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#ffffff',
+              'line-width': 6,
+              'line-opacity': 0.8
+            }
+          });
+
+          // 繪製航跡主線條
+          map.addLayer({
+            id: 'gpx-track-line',
+            type: 'line',
+            source: 'gpx-track',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#0077b6', // 航跡顏色
+              'line-width': 4,
+              'line-opacity': 0.9
+            }
+          });
+        })
+        .catch(err => {
+          console.error('GPX 載入失敗：', err);
+        });
+    });
+
+    // 4. 地標資料
+    const locations = [
+      { lng: 121.60305, lat: 25.15156, title: "10米支流瀑", image: "../images/20260920/N25.15156° E121.60305°.JPG" },
+      { lng: 121.60295, lat: 25.15174, title: "10米支流瀑", image: "../images/20260920/N25.15174° E121.60295°.JPG" },
+      { lng: 121.60309, lat: 25.15110, title: "支流瀑", image: "../images/20260920/N25.15110° E121.60309°.JPG" },
+      { lng: 121.60332, lat: 25.15024, title: "支流", image: "../images/20260920/N25.15024° E121.60332°.jpg" },
+      { lng: 121.60725, lat: 25.14903, title: "2M潭瀑", image: "../images/20260920/N25.14903° E121.60725°.jpg" },    
+      { lng: 121.60215, lat: 25.15114, title: "停車點", description: "可停兩台汽車" },    
+      { lng: 121.60274, lat: 25.15171, title: "養鱒場", description: "離溯點" },    
+      { lng: 121.60894, lat: 25.14784, title: "溪底二號橋" }    
+    ];
+
+    // 5. 在地圖上加上 Marker 與 Popup
+    locations.forEach(loc => {
+      const hasImage = Boolean(loc.image);
+      const descTag = loc.description ? `<p class="popup-desc">${loc.description}</p>` : '';
+      const imgTag = hasImage ? `<img src="${loc.image}" alt="${loc.title}" onclick="openModal(this.src)">` : '';
+
+      const popupHtml = `
+        <div class="popup-card ${hasImage ? 'has-image' : 'no-image'}">
+          <h3>${loc.title}</h3>
+          ${descTag}
+          ${imgTag}
+        </div>
+      `;
+
+      new maplibregl.Marker({ color: '#e63946' })
+        .setLngLat([loc.lng, loc.lat])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(popupHtml))
+        .addTo(map);
+    });
+
+    // 6. 燈箱函數
+    function openModal(imgSrc) {
+      const modal = document.getElementById('image-modal');
+      const modalImg = document.getElementById('modal-img');
+      modalImg.src = imgSrc;
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('image-modal');
+      modal.style.display = 'none';
+      document.getElementById('modal-img').src = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
