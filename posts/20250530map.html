@@ -218,7 +218,7 @@
     // 3. 地圖載入完成後：透過 fetch 讀取 GPX 檔並繪製航跡
     map.on('load', () => {
       // 請將此處路徑替換為您的 GPX 檔案相對路徑
-      const gpxFilePath = '../gpx/20260920.GPX';
+      const gpxFilePath = '../gpx/20250530.GPX';
 
       fetch(gpxFilePath)
         .then(response => {
@@ -280,14 +280,18 @@
 
     // 4. 地標資料
     const locations = [
-      { lng: 121.60305, lat: 25.15156, title: "10米支流瀑", image: "../images/20260920/N25.15156° E121.60305°.JPG" },
-      { lng: 121.60295, lat: 25.15174, title: "10米支流瀑", image: "../images/20260920/N25.15174° E121.60295°.JPG" },
-      { lng: 121.60309, lat: 25.15110, title: "支流瀑", image: "../images/20260920/N25.15110° E121.60309°.JPG" },
-      { lng: 121.60332, lat: 25.15024, title: "支流", image: "../images/20260920/N25.15024° E121.60332°.jpg" },
-      { lng: 121.60725, lat: 25.14903, title: "2M潭瀑", image: "../images/20260920/N25.14903° E121.60725°.jpg" },    
-      { lng: 121.60215, lat: 25.15114, title: "停車點", description: "可停兩台汽車" },    
-      { lng: 121.60274, lat: 25.15171, title: "養鱒場", description: "離溯點" },    
-      { lng: 121.60894, lat: 25.14784, title: "溪底二號橋" }    
+      { lng: 121.53889, lat: 24.88429, title: "停車點I", description: "可停兩台小客車及機車" , image: "../images/20250530/N25.15156° E121.60305°.JPG" },
+      { lng: 121.53856, lat: 24.88451, title: "停車點II", description: "可停一台九人巴" , image: "../images/20250530/N25.15174° E121.60295°.JPG" },
+      { lng: 121.53886, lat: 24.88422, title: "紅河谷步道入口", image: "../images/20250530/N25.15110° E121.60309°.JPG" },
+      { lng: 121.53729, lat: 24.88301, title: "下切點"},
+      { lng: 121.53722, lat: 24.88302, title: "步道下切至加九寮溪"},    
+      { lng: 121.53705, lat: 24.88303, title: "進入加九寮溪", description: "攔沙壩上方" },    
+      { lng: 121.53705, lat: 24.88309, title: "攔沙壩上方合照"},    
+      { lng: 121.53515, lat: 24.88190, title: "漂漂河" }   
+      { lng: 121.53479, lat: 24.88134, title: "小休後續行" }
+      { lng: 121.53351, lat: 24.88071, title: "水超大", description: "拉繩到左岸" }
+      { lng: 121.52878, lat: 24.87780, title: "午餐" }
+      { lng: 121.52876, lat: 24.87781, title: "鳥巢" }
     ];
 
     // 5. 在地圖上加上 Marker 與 Popup
