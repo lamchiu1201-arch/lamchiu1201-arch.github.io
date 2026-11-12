@@ -1,243 +1,922 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-Hant">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>志雪線（兩天一夜）| 戶外日記</title>
 
-<meta charset="UTF-8">
-<title>志雪線</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+TC:wght@100;200;300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* 頁面專屬排版優化 */
+    .post-cover-container {
+      position: relative;
+      margin: 15px 0 35px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
 
-<link rel="stylesheet" href="../style.css">
+    .post-cover-container img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      margin: 0;
+      border-radius: 12px;
+    }
 
+    /* 行程摘要概覽卡片 */
+    .trip-overview {
+      background: #f7f9f7;
+      border: 1px solid #e1e7e1;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 45px;
+    }
+
+    .trip-overview h3 {
+      margin: 0 0 16px 0;
+      font-size: 19px;
+      color: #2f3f2f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .trip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .trip-item {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #444;
+    }
+
+    .trip-item strong {
+      color: #2f3f2f;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    /* 章節標題強化 */
+    .day-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #2f3f2f;
+      padding-bottom: 12px;
+      margin: 50px 0 25px 0;
+    }
+
+    .day-heading h2 {
+      font-size: 26px;
+      color: #2f3f2f;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .day-heading .day-subtitle {
+      font-size: 15px;
+      color: #666;
+      font-weight: 400;
+    }
+
+    /* 時間軸容器 */
+    .timeline {
+      position: relative;
+      margin: 25px 0 40px 10px;
+      padding-left: 28px;
+      border-left: 2px solid #dbe2db;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 22px;
+      line-height: 1.65;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* 時間軸節點小圓點 */
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -35px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #7d8e7d;
+      transition: all 0.2s ease;
+    }
+
+    .timeline-item.highlight::before {
+      border-color: #2f3f2f;
+      background: #2f3f2f;
+      width: 14px;
+      height: 14px;
+      left: -36px;
+    }
+
+    /* 時間戳記 */
+    .tl-time {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #2f3f2f;
+      background: #eef2ee;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-right: 8px;
+      display: inline-block;
+      letter-spacing: 0.5px;
+    }
+
+    /* 地標與重點 */
+    .tl-landmark {
+      font-weight: 600;
+      color: #1a271a;
+      font-size: 17px;
+    }
+
+    /* 卡路里與補給膠囊標籤 */
+    .tl-kcal {
+      display: inline-flex;
+      align-items: center;
+      background: #fff5ec;
+      color: #b85d19;
+      border: 1px solid #ffd8bd;
+      border-radius: 12px;
+      padding: 1px 9px;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 2px 4px;
+      vertical-align: middle;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+
+    .tl-tag {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-right: 5px;
+    }
+
+    .tl-tag.water {
+      background: #e6f4fa;
+      color: #0b699e;
+      border: 1px solid #c2e5f5;
+    }
+
+    .tl-tag.camp {
+      background: #eaf5ea;
+      color: #2b772b;
+      border: 1px solid #c8e6c8;
+    }
+
+    .tl-tag.peak {
+      background: #f3edf8;
+      color: #683799;
+      border: 1px solid #decbf0;
+    }
+
+    /* 隨筆／觀察備註卡片 */
+    .tl-note {
+      margin-top: 8px;
+      background: #fbfcfb;
+      border-left: 3px solid #8ba08b;
+      padding: 10px 14px;
+      font-size: 15.5px;
+      color: #4a544a;
+      line-height: 1.6;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .tl-subinfo {
+      color: #666;
+      font-size: 14.5px;
+      margin-top: 4px;
+    }
+
+    /* 每日統計卡片 Grid */
+    .stats-card-container {
+      background: #ffffff;
+      border: 1px solid #e1e7e1;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 35px 0 20px 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+
+    .stats-card-container h4 {
+      margin: 0 0 16px 0;
+      font-size: 17px;
+      color: #2f3f2f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: #f7f9f7;
+      border-radius: 8px;
+      padding: 14px 16px;
+      border: 1px solid #edf2ed;
+    }
+
+    .stat-box .stat-label {
+      font-size: 13px;
+      color: #6c786c;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .stat-box .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2f3f2f;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+
+    .stat-box .stat-desc {
+      font-size: 13.5px;
+      color: #555;
+      margin-top: 5px;
+      line-height: 1.45;
+    }
+
+    .stat-note-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: #fbfbfb;
+      border-radius: 8px;
+      border-left: 3px solid #2f3f2f;
+      font-size: 14.5px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    /* 小結區塊優化 */
+    .takeaways-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 25px 0 40px 0;
+    }
+
+    .takeaway-card {
+      background: #ffffff;
+      border: 1px solid #e2e8e2;
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .takeaway-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .takeaway-card .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2f3f2f;
+      margin: 0 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .takeaway-card p {
+      margin: 0;
+      font-size: 15.5px;
+      color: #444;
+      line-height: 1.7;
+      text-indent: 0;
+    }
+
+    /* 書籍推薦專區 */
+    .book-recommendation {
+      background: linear-gradient(135deg, #f7f9f7 0%, #edf3ed 100%);
+      border: 1px solid #c9d8c9;
+      border-radius: 12px;
+      padding: 28px 30px;
+      margin: 40px 0 25px 0;
+    }
+
+    .book-recommendation h3 {
+      margin: 0 0 14px 0;
+      font-size: 19px;
+      color: #2f3f2f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .book-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1e301e;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .book-recommendation p {
+      text-indent: 0;
+      font-size: 15.5px;
+      color: #3b473b;
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    .book-recommendation p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* 參考資料 */
+    .reference-box {
+      background: #fafafa;
+      border-left: 3px solid #999;
+      padding: 14px 20px;
+      font-size: 14.5px;
+      color: #555;
+      line-height: 1.6;
+      border-radius: 0 6px 6px 0;
+      margin: 15px 0 35px 0;
+    }
+
+    /* 響應式優化 */
+    @media (max-width: 768px) {
+      .post {
+        padding: 40px 20px;
+      }
+      .trip-grid, .stats-grid, .takeaways-grid {
+        grid-template-columns: 1fr;
+      }
+      .timeline {
+        padding-left: 20px;
+        margin-left: 6px;
+      }
+      .timeline-item::before {
+        left: -27px;
+      }
+      .timeline-item.highlight::before {
+        left: -28px;
+      }
+      .day-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header class="header">
+  <div class="logo">
+    <span class="square"></span>
+    米雪的天空
+  </div>
 
-<div class="logo">
-<span class="square"></span>
-米雪的天空
-</div>
-
-<nav>
-<a href="../index.html">關於我</a>
-<a href="../blog.html">戶外日記</a>
-</nav>
-
+  <nav>
+    <a href="../index.html">關於我</a>
+    <a href="../blog.html">戶外日記</a>
+  </nav>
 </header>
 
-
 <div class="layout"> 
+  <section class="post">
 
-<section class="post">
+    <h1>志雪線</h1>
 
-<h1>志雪線</h1>
+    <p class="post-meta">
+      2026 / 登山 / 百岳 / 兩天一夜
+    </p>
 
-<p class="post-meta">
-2026 / 登山 / 百岳 / 兩天一夜
-</p>
+    <!-- 封面主圖 -->
+    <div class="post-cover-container">
+      <img src="../images/20261105/1.jpg" alt="志雪線風光" loading="eager">
+    </div>
+
+    <!-- 行程概覽卡片 -->
+    <div class="trip-overview">
+      <h3>📋 行程概要</h3>
+      <div class="trip-grid">
+        <div class="trip-item"><strong>行程日期：</strong>2026年11月05日 – 11月06日</div>
+        <div class="trip-item"><strong>行程型態：</strong>兩天一夜・百岳快速連走</div>
+        <div class="trip-item"><strong>行經山峰：</strong>志佳陽大山（百岳）、雪山南峰（十翠）、雪山主峰（百岳）、雪山東峰（百岳）</div>
+        <div class="trip-item"><strong>背負重量：</strong>約 11–12 kg（含水 2–3L）</div>
+        <div class="trip-item"><strong>起登／下山：</strong>四季蘭溪吊橋 ➔ 雪山登山口</div>
+        <div class="trip-item"><strong>補給策略：</strong>定時定量・每 30 分鐘微量補充</div>
+      </div>
+    </div>
+
+    <!-- ==================== DAY 01 ==================== -->
+    <div class="day-heading" id="D1">
+      <h2>【Day 01】 四季蘭溪吊橋 ➔ 瓢簞山屋</h2>
+      <span class="day-subtitle">2026.11.05・行進時間 290 分・上河 0.56</span>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="tl-time">05:00</span> 起床換衣服
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">05:20</span> 出門 <span class="tl-kcal">水煮蛋 75 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">05:29</span> 浮洲火車站
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">05:32</span> 板橋火車站
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">05:54</span> 板橋火車站（普悠瑪 402）
+        <span class="tl-kcal">大鮮肉包 290 kcal</span>
+        <span class="tl-kcal">香烤骨腿 212 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">06:00</span> 晨間補充
+        <span class="tl-kcal">蛋白粉 159 kcal</span>
+        <span class="tl-kcal">無糖豆漿 150 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">07:13</span> 宜蘭火車站
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">07:30</span> 宜蘭轉運站（搭乘國光客運 1751，需提早 10 分鐘取票）
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">07:57</span> 備藥小記
+        <div class="tl-note">想說要來吃個暈車藥，結果發現暈車藥只有帶一顆，那留給回程好了。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">09:00</span> 預防性服用丹木斯 125mg
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">09:17</span> 南山部落，中停 10 分鐘上洗手間
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">10:19</span> 車程隨記
+        <div class="tl-note">坐車的時間好漫長，皮革的味道讓我有點暈車，所幸只剩二十分鐘而已。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">10:41</span> 中興路口・7-11 最後補給
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">10:46</span> 補給早餐 <span class="tl-kcal">鮪魚飯糰 231 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">10:58</span> 中興路口 7-11 出發
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">11:26</span> <span class="tl-landmark">四季蘭溪吊橋（起登）</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">11:47</span> 大太陽，天氣蠻熱的
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">11:57</span> <span class="tl-tag water">水源</span><span class="tl-landmark">3.1K 溪邊補水</span>
+        <span class="tl-kcal">花生巧克力口味蛋白棒 203 kcal</span>
+        <div class="tl-note">看到野豬屁屁，但跑太快來不及拍照。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">12:06</span> 續行
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:24</span> 行進間補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:51</span> 4.6K <span class="tl-kcal">BF海鹽檸檬糖 9.3 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:58</span> 行進間補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">14:19</span> 小休 <span class="tl-kcal">無加糖可可椰子燕麥穀片 100 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">14:25</span> 續行
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">15:01</span> <span class="tl-tag camp">營地</span><span class="tl-landmark">賽良久營地</span>
+        <span class="tl-kcal">無加糖可可椰子燕麥穀片 100 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">15:11</span> 續行，天氣轉涼，戴頭巾
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">15:35</span> 行進間補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">15:51</span> 行進間補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+        <div class="tl-note">續行以後明顯感覺到肌力下降，開始需要抓點東西來穩定身體，也有可能是我走太快。</div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">16:16</span> <span class="tl-tag camp">C1宿點</span><span class="tl-tag water">W1水源</span><span class="tl-landmark">瓢簞山屋（包場，水塔有水）</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">16:28</span> 留守回報與通訊
+        <div class="tl-subinfo"><strong>留守狀況：</strong>天氣多雲。翠池無水，水補給點為瓢簞山屋水桶及雪山南峰舊址營地。</div>
+        <div class="tl-note">訊號好到可以自己看 Windy，還可以傳照片。<br><strong>當前衣物：</strong>襪子、羊毛底層、刷毛中層、風雨衣、登山褲、雨褲、頭巾、毛帽。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">16:48</span> 晚餐時間 <span class="tl-kcal">晚餐約 800 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">17:20</span> 有點冷，多穿羽絨衣
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">17:36</span> 暖身熱飲 <span class="tl-kcal">美祿 82 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">17:49</span> PAC 檢測：PAC 充氣到自動洩氣約 5 分 30 秒
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">18:12</span> 山屋外散步
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">18:24</span> 回山屋。山屋依舊沒有燈，似乎就是沒有燈了。
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">19:12</span> 山屋外感受低溫
+        <div class="tl-note">Windy 顯示 8 度，蠻冷的。上半身還好，褲子有點不夠，外露的手很冷，寒氣會穿透我的衣服，我還是回去我溫暖的窩好了。如果想要溫暖地待在外面，感覺可以多備一條羊毛打底褲跟手套。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">23:50</span> 上廁所夜起
+        <div class="tl-note">明明在山屋裏，卻感覺風一直灌進來，越睡越冷，腦袋被風吹到頭痛。後來發現有窗戶沒關好，把窗戶關好之後好多了。不過後面都沒有睡得很好，總是睡睡醒醒。</div>
+      </div>
+    </div>
+
+    <!-- Day 01 統計卡片 -->
+    <div class="stats-card-container">
+      <h4>📊 Day 01 數據與指標結算</h4>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">行進速度比</div>
+          <div class="stat-val">上河 0.56</div>
+          <div class="stat-desc">上河 525 分鐘 ➔ 實走 290 分鐘（四季蘭溪吊橋－瓢簞山屋）</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">總熱量攝取</div>
+          <div class="stat-val">2,658 kcal</div>
+          <div class="stat-desc">行動糧（含早餐）約 1,776 kcal</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">背包負重</div>
+          <div class="stat-val">11 – 12 kg</div>
+          <div class="stat-desc">含飲用水 2–3L</div>
+        </div>
+      </div>
+      <div class="stat-note-box">
+        <strong>身體狀態省思：</strong>3.1K 溪底以後一直到瓢簞山屋才有上廁所，回想起來補水量可能稍微偏少。
+      </div>
+    </div>
 
 
-<img src="../images/20261105/1.jpg">
+    <!-- ==================== DAY 02 ==================== -->
+    <div class="day-heading" id="D2">
+      <h2>【Day 02】 瓢簞山屋 ➔ 雪山群峰 ➔ 雪山登山口</h2>
+      <span class="day-subtitle">2026.11.06・連走志佳陽、雪主、雪東（途經雪山南峰）・順利一日下山</span>
+    </div>
 
-<h2 style="text-align: center;">志雪線</h2><br>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="tl-time">05:00</span> 起床、裝水 2L <span class="tl-kcal">早餐 350 kcal</span>
+      </div>
 
-<p class="info">
-日期：2026年11月05-06日（兩天一夜）
-</p><br>
-<h2 id="D1">【Day01】</h2>
-<p class="info">
-0500 起床換衣服
-<br>0520 出門、水煮蛋75kcal
-<br>0529 浮洲火車站
-<br>0532 板橋火車站
-<br>0554 板橋火車站（普悠瑪402） 。大鮮肉包290kcal、香烤骨腿212kcal。
-<br>0600 蛋白粉159kcal、無糖豆漿150kcal
-<br>0713 宜蘭火車站 
-<br>0730 宜蘭轉運站（國光客運1751）、要提早10分鐘取票
-<br>0757 想說要來吃個暈車藥，結果發現暈車藥只有帶一顆，那留給回程好了
-<br>0900 預防性服用丹木斯125mg
-<br>0917 南山部落，中停10分鐘上洗手間
-<br>1019 坐車的時間好漫長，皮革的味道讓我有點暈車，所幸只剩二十分鐘而已。
-<br>1041 中興路口、711補給
-<br>1046 鮪魚飯糰231kcal
-<br>1058 中興路口711出發
-<br>1126 四季蘭溪吊橋
-<br>1147 大太陽，蠻熱的
-<br>1157 3.1K溪邊補水，看到野豬屁屁，但跑太快來不及拍照。花生巧克力口味蛋白棒203kcal。
-<br>1206 續行
-<br>1324 花生巧克力口味蛋白棒101kcal
-<br>1351 4.6K。BF海鹽檸檬糖9.3kcal
-<br>1358 花生巧克力口味蛋白棒101kcal
-<br>1419 休。無加糖可可椰子燕麥穀片100kcal
-<br>1425 續行
-<br>1501 賽良久營地。無加糖可可椰子燕麥穀片100kcal
-<br>1511 續行，天氣變涼了，帶頭巾
-<br>1535 花生巧克力口味蛋白棒101kcal
-<br>1551 花生巧克力口味蛋白棒101kcal。續行以後明顯感覺到肌力下降，開始需要抓點東西來穩定身體，也有可能是我走太快。
-<br>1616 瓢簞山屋C1=W1包場，水塔有水
-<br>1628 留守回報：天氣多雲。翠池無水，水補給點為瓢單山屋水桶及雪山南峰舊址營地。
-<br>訊號好到可以自己看Windy，還可以傳照片。
-<br>衣物：襪子、羊毛底層、刷毛中層、風雨衣、登山褲、雨褲、頭巾、毛帽
-<br>1648 晚餐800kcal
-<br>1720 有點冷，多穿羽絨衣
-<br>1736 美祿82kcal
-<br>1749 PAC檢測、PAC充氣到自動洩氣約5分30秒
-<br>1812 山屋外
-<br>1824 山屋，依舊沒有燈，似乎就是沒有燈了。
-<br>1912 山屋外。Windy顯示8度，蠻冷的。上半身還好，褲子有點不夠，外露的手很冷，寒氣會穿透我的衣服，我還是回去我溫暖的窩好了。如果想要溫暖地呆著外面，感覺可以多備一條羊毛打底褲跟手套。
-<br>2350 上廁所
-<br>明明在山屋裏，卻感覺風一直灌進來，越睡越冷，腦袋被風吹到頭痛。後來發現有窗戶沒關好，把窗戶關好之後好多了。不過後面都沒有睡得很好，總是睡睡醒醒。
-<br>
-<br><b>狀態</b>
-<br>3.1K溪底以後一直到瓢簞山屋才有上廁所，補水可能太少。
-<br>
-<br><b>補給</b>
-<br>行動糧（含早餐）約1776kcal
-<br>總熱量2658kcal
-<br>
-<br><b>行進速度</b>
-<br>四季蘭溪吊橋-瓢簞山屋
-<br>上河時間525分鐘
-<br>行進時間290分鐘
-<br>上河0.56
-<br>
-<br><b>背負</b>
-<br>重量11-12kg（含水2-3L）
-</p>
-<br>
-<br>
-<h2 id="D2">【Day02】</h2>
-<p class="info">
-0500 起床、早餐350kcal、裝水2L
-<br>0528 外面開始亮起來了
-<br>0604 瓢簞山屋C1=W1起登。蛋白粉165kcal、全脂奶粉75.6kcal
-<br>0619 太陽出來了，脫保暖衣物
-<br>0629 志佳陽基點峰
-<br>0641 志佳陽大山 
-<br>0658 花生巧克力口味蛋白棒101kcal
-<br>0731 花生巧克力口味蛋白棒101kcal
-<br>0749 雪山舊址營地。速度還不錯。算了一下時間，10:00到雪山主峰的話，有望今天下山。
-<br>0816 雪山南峰
-<br>0830 雪山舊址營地。確定趕趕看10點雪主，把登山杖拿出來用，以防萬一也先背水。無加糖可可椰子燕麥穀片100kcal。
-<br>取水4L：D2雪山舊址營地-翠池山屋1.5L、翠池山屋1L、D3翠池山屋-三六九山莊1.5L
-<br>下一穩定水源：三六九山莊水塔
-<br>0910 花生巧克力口味蛋白棒101kcal
-<br>0918 請留守幫忙確認：國光客運1751 梨山往宜蘭，武陵農場發車時間
-<br>0932 果膠126kcal
-<br>0933 留守回報：1751發車時間為14:20，速度建議維持上河0.6
-<br>1016 雪山主峰，遇到三名德國山友，在此之前都沒有遇到人。花生巧克力口味蛋白棒101kcal。
-<br>1025 續行
-<br>1106 花生巧克力口味蛋白棒101kcal。以這個速度下坡，會感覺到兩邊大挴指外側有熱點，但還沒到磨出水泡的程度。
-<br>1127 三六九山莊
-<br>1134 遇到果果本人，收穫合照一張
-<br>1143 花生巧克力口味蛋白棒101kcal
-<br>1200 雪山東峰，有點熱，改短褲
-<br>1213 果膠112kcal
-<br>1252 七卡山莊
-<br>1305 果膠122kcal。下之字坡下到快受不了，有幾段沒忍住直接從中間切下去。
-<br>1318 雪山登山口。天氣變差，也變冷。
-<br>1335 便車到武稜農場
-<br>1350 國光客運1764
-<br>1355 人生吐安錠*1
-<br>1414 山裏起大霧，車上好冷，暈車到不行，胃裏翻江倒海。
-<br>1500 藥效開始起作用，一整個睡死
-<br>1634 羅東轉運站
-<br>1643 腳上被芒草割到的地方超痛
-<br>1653 羅東火車站
-<br>2030 家
-<br>
-<br><b>狀態</b>
-<br>精神煥散的時候，不一定是累，有可能是身體脫水，補點水精神就會回來了，百試百靈。
-<br>
-<br><b>補給</b>
-<br>行動糧（含早餐）約1660kcal
-<br>
-<br><b>行進速度</b>
-<br>瓢簞山屋-雪山主峰
-<br>上河時間470分鐘
-<br>行進時間252分鐘
-<br>上河0.54
-<br>
-<br>雪山主峰-雪山登山口
-<br>上河時間355分鐘
-<br>行進時間180分鐘
-<br>上河0.51
-<br>
-<br><b>背負</b>
-<br>重量11-12kg（含水2-3L）
-</p>
-<br>
-<br>
-<h2 id="conclusion">【小結】</h2>
-<p class="info">
-<b>補給：</b>這次嘗試「定時定量」補給，身體回饋很不錯，能維持穩定輸出而不易疲勞。原本設定每小時補充 200 kcal，但實測發現一次吞下 200 kcal 有點負擔，後來調整成每半小時補充 100 kcal——剛好是一口蛋白棒的份量，迅速咬一口就能繼續行進。
-<br><b>節奏：</b>我本身偏好「小休不斷」，身體熱開後更傾向維持行進的動能與慣性。這兩天最長休息都不超過 10 分鐘，停下約 10 分鐘通常就會覺得該繼續前進。除了保持行進節奏，也是避免停太久身體冷掉，導致重新啟動時加倍吃力。
-<br><b>飲水：</b>原先預計每小時喝 300 ml，但實際攝取量少很多。第一天喝得偏少，第二天改為高頻率微量補充，雖然沒有準確計算，但大約每 15 分鐘或口乾時就吸一口水。這次的小心得是：當精神開始渙散時，喝口水往往能讓注意力回穩；如果還是渙散，就代表該補熱量了。
-<br><b>狀態：</b>建立起規律補給後，身體會形成自然的回饋機制——每走差不多半小時感到微微累時，身體就會提醒自己：該補充下一口能量了。
-<br>
-<br>文章最後，想跟大家推薦我最近在讀的這本書：<b>《女力全開：首本從荷爾蒙出發、針對女性專屬生理機制與身體構造，量身打造的全方位運動與營養指南》</b>。
-<br>書裡打破了滿多傳統運動觀念，帶來不少（對我來說）非常耳目一新的視角。特別的是，它深入探討了女性專屬的生理機制，針對月經週期、孕期到更年期等不同階段，提供了很具體的訓練調整與補給策略。   
-<br>整本書的架構很彈性，既可以順著章節循序漸進地讀，也很適合當作工具書，直接挑自己當下最有需要的章節翻閱。
-</p>
-<br>
-<br>
-<h2 id="reference">【參考資料】</h2>
-<p class="info">史黛西·辛姆斯、席琳娜·葉卡（2025）。女力全開：首本從荷爾蒙出發、針對女性專屬生理機制與身體構造，量身打造的全方位運動與營養指南（王念慈 譯；修訂版）。三采文化。（原著出版於 2024）</p>
+      <div class="timeline-item">
+        <span class="tl-time">05:28</span> 外面天色開始亮起來了
+      </div>
 
-<a href="../blog.html" class="post-back">
-← 返回前頁
-</a>
+      <div class="timeline-item highlight">
+        <span class="tl-time">06:04</span> <span class="tl-landmark">瓢簞山屋（C1）起登</span>
+        <span class="tl-kcal">蛋白粉 165 kcal</span>
+        <span class="tl-kcal">全脂奶粉 75.6 kcal</span>
+      </div>
 
-</section>
+      <div class="timeline-item">
+        <span class="tl-time">06:19</span> 太陽出來了，脫保暖衣物
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">06:29</span> <span class="tl-tag" style="background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;">基點峰</span><span class="tl-landmark">志佳陽基點峰（H3289m）</span>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">06:41</span> <span class="tl-tag peak">百岳</span><span class="tl-landmark">志佳陽大山（最高峰 H3345m）</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">06:58</span> 規律微量補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">07:31</span> 規律微量補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">07:49</span> <span class="tl-tag camp">營地</span><span class="tl-landmark">雪山舊址營地</span>
+        <div class="tl-note">速度還不錯。算了一下時間，如果 10:00 能到雪山主峰的話，有望今天直接下山！</div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">08:16</span> <span class="tl-tag" style="background:#eaf0f6;color:#204060;border:1px solid #c5d7ea;">高山・十翠</span><span class="tl-landmark">雪山南峰（H3505m）</span>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">08:30</span> <span class="tl-tag water">水源補給</span><span class="tl-landmark">回到雪山舊址營地</span>
+        <span class="tl-kcal">無加糖可可椰子燕麥穀片 100 kcal</span>
+        <div class="tl-note">確定趕趕看 10 點雪主，把登山杖拿出來用，以防萬一也先背水。</div>
+        <div class="tl-subinfo">
+          <strong>取水規劃 4L：</strong>D2 雪山舊址營地－翠池山屋 1.5L、翠池山屋 1L、D3 翠池山屋－三六九山莊 1.5L。<br>
+          <strong>備註：</strong>下一穩定水源為三六九山莊水塔。
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">09:10</span> 規律微量補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">09:18</span> 請留守幫忙確認：國光客運 1751（梨山往宜蘭，武陵農場發車時間）
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">09:32</span> 快攻能量膠 <span class="tl-kcal">果膠 126 kcal</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">09:33</span> 留守回報
+        <div class="tl-subinfo">1751 發車時間為 14:20，速度建議維持上河 0.6。</div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">10:16</span> <span class="tl-tag peak">百岳</span><span class="tl-landmark">雪山主峰（H3886m）</span>
+        <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+        <div class="tl-note">遇到三名德國山友，在此之前整路都沒有遇到其他人。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">10:25</span> 續行下山
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">11:06</span> 下坡步態觀察 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+        <div class="tl-note">以這個速度下坡，會感覺到兩邊大拇指外側有熱點，但還沒到磨出水泡的程度。</div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">11:27</span> <span class="tl-tag camp">山屋</span><span class="tl-landmark">三六九山莊</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">11:34</span> 遇到果果本人，收穫合照一張！
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">11:43</span> 行進間補給 <span class="tl-kcal">花生巧克力口味蛋白棒 101 kcal</span>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">12:00</span> <span class="tl-tag peak">百岳</span><span class="tl-landmark">雪山東峰</span>
+        <div class="tl-subinfo">天氣轉熱，改換短褲行進。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">12:13</span> 補充能量 <span class="tl-kcal">果膠 112 kcal</span>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">12:52</span> <span class="tl-tag camp">山莊</span><span class="tl-landmark">七卡山莊</span>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:05</span> 衝刺最後之字坡 <span class="tl-kcal">果膠 122 kcal</span>
+        <div class="tl-note">下之字坡下到快受不了，有幾段沒忍住直接從中間切下去。</div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">13:18</span> <span class="tl-landmark">🏁 雪山登山口（抵達終點）</span>
+        <div class="tl-subinfo">天氣轉差，也開始變冷。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:35</span> 幸運搭便車前往武陵農場
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:50</span> 國光客運 1764 上車
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">13:55</span> 預防暈車：人生吐安錠 * 1
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">14:14</span> 乘車抗暈紀錄
+        <div class="tl-note">山裏起大霧，車上好冷，暈車到不行，胃裏翻江倒海。</div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">15:00</span> 藥效開始起作用，一整個睡死
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">16:34</span> 羅東轉運站
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">16:43</span> 痛感回歸：腳上被芒草割到的地方超痛
+      </div>
+
+      <div class="timeline-item">
+        <span class="tl-time">16:53</span> 羅東火車站
+      </div>
+
+      <div class="timeline-item highlight">
+        <span class="tl-time">20:30</span> 平安回到溫暖的家
+      </div>
+    </div>
+
+    <!-- Day 02 統計卡片 -->
+    <div class="stats-card-container">
+      <h4>📊 Day 02 數據與指標結算</h4>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">瓢簞 ➔ 雪主</div>
+          <div class="stat-val">上河 0.54</div>
+          <div class="stat-desc">上河 470 分鐘 ➔ 實走 252 分鐘</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">雪主 ➔ 登山口</div>
+          <div class="stat-val">上河 0.51</div>
+          <div class="stat-desc">上河 355 分鐘 ➔ 實走 180 分鐘</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">行動糧補給</div>
+          <div class="stat-val">1,660 kcal</div>
+          <div class="stat-desc">含早餐與高強度定時補給</div>
+        </div>
+      </div>
+      <div class="stat-note-box">
+        <strong>身體狀態省思：</strong>精神渙散的時候，不一定是真的疲勞，高機率是身體脫水了！補點水精神就會迅速回升，百試百靈。
+      </div>
+    </div>
+
+
+    <!-- ==================== 小結 ==================== -->
+    <div class="day-heading" id="conclusion">
+      <h2>【行程小結】</h2>
+      <span class="day-subtitle">定時定量補給、體能節奏與水分調節心得</span>
+    </div>
+
+    <div class="takeaways-grid">
+      <div class="takeaway-card">
+        <div class="card-title">🍪 補給策略</div>
+        <p>這次嘗試「定時定量」補給，身體回饋非常理想，能維持穩定輸出而不易疲勞。原本設定每小時補充 200 kcal，但實測發現一次吞下 200 kcal 消化負擔較大，後來靈活調整成每半小時補充 100 kcal——剛好是一口蛋白棒的份量，迅速咬一口就能無縫繼續行進。</p>
+      </div>
+
+      <div class="takeaway-card">
+        <div class="card-title">⏱️ 行進節奏</div>
+        <p>我個人偏好「小休不斷」，身體熱開後更傾向維持行進的動能與慣性。這兩天最長休息都不超過 10 分鐘，停下約 10 分鐘通常就會覺得該繼續前進。除了保持行進節奏，也是避免停太久身體冷掉，導致重新啟動時加倍吃力。</p>
+      </div>
+
+      <div class="takeaway-card">
+        <div class="card-title">💧 飲水調節</div>
+        <p>原先預計每小時喝 300 ml，但實際攝取量少很多。第一天喝得偏少，第二天改為高頻率微量補充，雖然沒有準確計算，但大約每 15 分鐘或口乾時就吸一口水。這次的小心得是：當精神開始渙散時，喝口水往往能讓注意力回穩；如果還是渙散，就代表該補熱量了。</p>
+      </div>
+
+      <div class="takeaway-card">
+        <div class="card-title">⚡ 身體回饋</div>
+        <p>建立起規律補給後，身體會形成自然的回饋機制——每走差不多半小時感到微微累時，身體就會主動提醒自己：該補充下一口能量了。</p>
+      </div>
+    </div>
+
+
+    <!-- ==================== 好書推薦 ==================== -->
+    <div class="book-recommendation">
+      <h3>📖 延伸閱讀推薦</h3>
+      <div class="book-title">《女力全開：首本從荷爾蒙出發、針對女性專屬生理機制與身體構造，量身打造的全方位運動與營養指南》</div>
+      <p>文章最後，想跟大家推薦我最近在讀的這本書。書裡打破了滿多傳統運動觀念，帶來不少（對我來說）非常耳目一新的視角。</p>
+      <p>特別的是，它深入探討了女性專屬的生理機制，針對月經週期、孕期到更年期等不同階段，提供了很具體的訓練調整與補給策略。</p>
+      <p>整本書的架構很彈性，既可以順著章節循序漸進地讀，也很適合當作工具書，直接挑自己當下最有需要的章節翻閱。</p>
+    </div>
+
+
+    <!-- ==================== 參考資料 ==================== -->
+    <h2 id="reference" style="margin-top: 40px;">【參考資料】</h2>
+    <div class="reference-box">
+      史黛西·辛姆斯、席琳娜·葉卡（2025）。女力全開：首本從荷爾蒙出發、針對女性專屬生理機制與身體構造，量身打造的全方位運動與營養指南（王念慈 譯；修訂版）。三采文化。（原著出版於 2024）
+    </div>
+
+    <a href="../blog.html" class="post-back">
+      ← 返回前頁
+    </a>
+
+  </section>
 </div>
 
 <footer class="footer">
+  <div class="footer-left">
+    <p>© 2026 by Michelle Lam.</p>
+  </div>
 
-<div class="footer-left">
-
-<p>© 2026 by Michelle Lam.</p>
-
-</div>
-
-<div class="footer-right">
-
-<div class="contact">
-
-<h4>電子郵件</h4>
-
-<p>
-<a href="mailto:lamchiu1201@gmail.com">
-lamchiu1201@gmail.com
-</a>
-</p>
-
-</div>
-
-</div>
-
+  <div class="footer-right">
+    <div class="contact">
+      <h4>電子郵件</h4>
+      <p>
+        <a href="mailto:lamchiu1201@gmail.com">
+          lamchiu1201@gmail.com
+        </a>
+      </p>
+    </div>
+  </div>
 </footer>
 
+<!-- 目錄按鈕與側邊欄導航 -->
 <button class="toc-toggle">目錄</button>
-  <nav class="toc" >
-    <ul><p>
-      <li><a href="#D1">Day01</a></li>
-      <li><a href="#D2">Day02</a></li>
-      <li><a href="#conclusion">小結</a></li>
-      <li><a href="#reference">參考資料</a></li>
-    </p></ul>
-  </nav>
+<nav class="toc">
+  <ul>
+    <li><a href="#D1">Day 01</a></li>
+    <li><a href="#D2">Day 02</a></li>
+    <li><a href="#conclusion">行程小結</a></li>
+    <li><a href="#reference">參考資料</a></li>
+  </ul>
+</nav>
 
 <script>
-const btn = document.querySelector(".toc-toggle");
-const toc = document.querySelector(".toc");
+  const btn = document.querySelector(".toc-toggle");
+  const toc = document.querySelector(".toc");
 
-btn.onclick = () => {
-  toc.classList.toggle("open");
-}
+  btn.onclick = () => {
+    toc.classList.toggle("open");
+  }
+
+  // 點擊目錄項目後自動關閉目錄
+  document.querySelectorAll(".toc a").forEach(link => {
+    link.onclick = () => {
+      toc.classList.remove("open");
+    };
+  });
 </script>
 
 </body>
